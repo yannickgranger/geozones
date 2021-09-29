@@ -30,11 +30,19 @@ class CountryLanguageBuilder implements CountryLanguageBuilderInterface
 
     public function parseData($data): array
     {
+        $table = [];
         $start = strpos($data, '#ISO');
         $strData = substr($data, $start+1);
-        $arrData = explode(PHP_EOL, $strData);
-        return array_map(function ($row) {
-            return preg_split("/\t+/", $row);
-        }, $arrData);
+
+        $lines = explode(PHP_EOL, $strData);
+
+        foreach($lines as $line) {
+            $content = explode("\t", $line);
+            if(count($content) > 1){
+                $table[] = explode("\t", $line);
+            }
+        }
+
+        return $table;
     }
 }

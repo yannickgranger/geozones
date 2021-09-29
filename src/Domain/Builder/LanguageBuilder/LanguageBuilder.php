@@ -27,14 +27,13 @@ class LanguageBuilder implements LanguageBuilderInterface
         $this->languageFactory = $languageFactory;
     }
 
-    public function build(): array
+    public function build(): \ArrayIterator
     {
         $rawContent = $this->getData();
         $arrayData = $this->parseData($rawContent);
         $this->languageDataValidator->validateData($arrayData);
         $languagesIterator = new \ArrayIterator($arrayData);
-        $iterator = $this->languageFactory->createListFromIterator($languagesIterator, []);
-        return iterator_to_array($iterator);
+        return $this->languageFactory->createListFromIterator($languagesIterator, []);
     }
 
     public function getData()

@@ -39,6 +39,7 @@ services:
             $languagesCodesUrl: '%language_codes_url%'
             $unsdUrl: '%unsd_url%'
             $zonesParameters: '%zones_parameters%'
+            $cacheTtl: '%cache_ttl%'
 
 
     MyPrm\GeoZones\:

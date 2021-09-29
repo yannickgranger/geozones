@@ -17,4 +17,10 @@ class World extends AbstractZone
             $this->regions[$region->getName()] = $region;
         }
     }
+
+    public function setRegions(array $regions): World
+    {
+        $this->regions = $regions;
+        return $this;
+    }
 }

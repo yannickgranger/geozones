@@ -9,6 +9,12 @@ class FsAdapter implements CacheAdapterInterface
 {
     private FilesystemAdapter $adapter;
 
+    public function get(string $fileName): mixed
+    {
+        $item = $this->adapter->getItem($fileName);
+        return $item->isHit() ? $item->get() : null;
+    }
+
     public function __construct(FilesystemAdapter $adapter)
     {
         $this->adapter = $adapter;

@@ -12,6 +12,8 @@ abstract class AbstractZoneFactory implements AbstractZoneFactoryInterface
     protected World $world;
     protected array $parameters = [];
     protected array $regions = [];
+    protected CountryFactory $countryFactory;
+    protected array $countriesData;
 
     public function build(array $data): World|Error
     {
@@ -42,7 +44,7 @@ abstract class AbstractZoneFactory implements AbstractZoneFactoryInterface
             return $iterator;
         }
 
-        return $this->mapCountries($iterator);
+        return $this->world->setRegions($this->mapCountries($iterator));
     }
 
     public function createRegions(\ArrayIterator $iterator): \Iterator|Error
@@ -80,6 +82,7 @@ abstract class AbstractZoneFactory implements AbstractZoneFactoryInterface
 
     public function mapCountries(\ArrayIterator $iterator): World|Error
     {
+        return new Error('TBD: // implements mapCountries method');
     }
 
 

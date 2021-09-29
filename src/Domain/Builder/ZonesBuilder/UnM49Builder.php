@@ -2,13 +2,14 @@
 
 namespace MyPrm\GeoZones\Domain\Builder\ZonesBuilder;
 
+use MyPrm\GeoZones\Domain\Builder\CountryBuilder\CountryDataBuilder;
 use MyPrm\GeoZones\Domain\Factory\UnM49ZoneFactoryInterface;
 use MyPrm\GeoZones\Domain\Model\World;
 use MyPrm\GeoZones\Domain\Service\Data\Parser\DataParserInterface;
-use MyPrm\GeoZones\Domain\Service\Data\Validator\DataValidatorInterface;
 use MyPrm\GeoZones\Domain\Service\Http\HttpGeoClientInterface;
 use MyPrm\GeoZones\Infrastructure\Service\Data\UnM49Validator;
 use MyPrm\GeoZones\SharedKernel\Error\Error;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 class UnM49Builder implements ZonesBuilderInterface
 {
@@ -19,11 +20,12 @@ class UnM49Builder implements ZonesBuilderInterface
     private string $url;
 
     public function __construct(
-        HttpGeoClientInterface $client,
-        DataParserInterface $parser,
-        UnM49Validator $dataValidator,
+        HttpGeoClientInterface    $client,
+        CountryDataBuilder        $countryDataBuilder,
+        DataParserInterface       $parser,
+        UnM49Validator            $dataValidator,
         UnM49ZoneFactoryInterface $zoneFactory,
-        string $unsdUrl
+        string                    $unsdUrl
     ) {
         $this->client = $client;
         $this->parser = $parser;
@@ -36,7 +38,6 @@ class UnM49Builder implements ZonesBuilderInterface
     {
         $data = $this->getData();
         $data = $this->parseData($data, $parameters);
-
         $content['fieldNames'] = array_shift($data);
         $content['data'] = $data;
 

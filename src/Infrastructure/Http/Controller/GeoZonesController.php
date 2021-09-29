@@ -11,8 +11,9 @@ class GeoZonesController
 {
     private GeoZonesRequestValidatorInterface $requestValidator;
 
-    public function __construct(GeoZonesRequestValidatorInterface $requestValidator)
-    {
+    public function __construct(
+        GeoZonesRequestValidatorInterface $requestValidator
+    ) {
         $this->requestValidator = $requestValidator;
     }
 
