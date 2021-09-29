@@ -24,6 +24,6 @@ class RestCountriesEuBuilder implements ZonesBuilderInterface
 
     public function build(array $parameters): World|Error
     {
-        // TODO: Implement build() method.
+        return new Error('', '', []);
     }
 }

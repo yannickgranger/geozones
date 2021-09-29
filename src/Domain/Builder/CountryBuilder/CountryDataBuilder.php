@@ -63,11 +63,11 @@ class CountryDataBuilder implements CountryDataBuilderInterface
 
     public function findLanguage(\ArrayIterator $iterator, string $code): \Traversable
     {
-        for ($iterator->rewind(); $iterator->valid(); $iterator->next()){
+        for ($iterator->rewind(); $iterator->valid(); $iterator->next()) {
             $current = $iterator->current();
-            if($current['iso639_1'] === $code){
+            if ($current['iso639_1'] === $code) {
                 yield $current;
-            } elseif($current['iso639_2'] === $code) {
+            } elseif ($current['iso639_2'] === $code) {
                 yield $current;
             }
         }

@@ -22,6 +22,6 @@ class FsAdapterFactory
 
     public function getAdapter(): FilesystemAdapter
     {
-        return new FilesystemAdapter($this->nameSpace,(int) $this->cacheTtl,$this->cacheDirectory);
+        return new FilesystemAdapter($this->nameSpace, (int) $this->cacheTtl, $this->cacheDirectory);
     }
 }

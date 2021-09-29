@@ -6,7 +6,7 @@ namespace MyPrm\GeoZones\SharedKernel\Error;
 
 class Error
 {
-    private $message;
+    private string $message;
     private string $method;
     private array $context;
 
@@ -20,11 +20,6 @@ class Error
     public function __toString()
     {
         return $this->method.':'.$this->message.'. '.json_encode($this->context);
-    }
-
-    public function fieldName(): string
-    {
-        return $this->fieldName;
     }
 
     public function message(): string

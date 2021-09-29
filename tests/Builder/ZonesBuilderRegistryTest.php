@@ -2,31 +2,41 @@
 
 namespace MyPrm\GeoZones\Tests\Builder;
 
+use MyPrm\GeoZones\Domain\Builder\ZonesBuilder\RestCountriesEuBuilder;
+use MyPrm\GeoZones\Domain\Builder\ZonesBuilder\UnM49Builder;
 use MyPrm\GeoZones\Domain\Builder\ZonesBuilder\ZonesBuilderInterface;
 use MyPrm\GeoZones\Domain\Builder\ZonesBuilderRegistry;
+use MyPrm\GeoZones\Domain\Builder\ZonesBuilderRegistryInterface;
 use MyPrm\GeoZones\Domain\Exception\MissingBuilderException;
-use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use PHPUnit\Framework\TestCase;
 
-class ZonesBuilderRegistryTest extends KernelTestCase
+class ZonesBuilderRegistryTest extends TestCase
 {
-    private ZonesBuilderRegistry $registry;
+    private ZonesBuilderRegistryInterface $registry;
 
     protected function setUp(): void
     {
-        self::bootKernel();
-        $container = static::getContainer();
-        $this->registry = $container->get('MyPrm\GeoZones\Domain\Builder\ZonesBuilderRegistry');
+        $one = $this->createConfiguredMock(UnM49Builder::class, [
+            'supports' => true
+        ]);
+        $two = $this->createConfiguredMock(RestCountriesEuBuilder::class, [
+            'supports' => true
+        ]);
+
+        $providers = new \ArrayIterator([$one, $two]);
+
+        $this->registry = new ZonesBuilderRegistry($providers, ['unm49', 'resteucountries']);
     }
 
-    public function testItGetsAbuilder()
+    public function testItReturnsByOrder()
     {
-        $builder =$this->registry->getBuilderFor('unm49');
-        $this->assertInstanceOf( ZonesBuilderInterface::class, $builder);
+        $expected = $this->registry->getBuilderByOrder(0);
+        $this->assertInstanceOf(ZonesBuilderInterface::class, $expected);
 
-        $builder =$this->registry->getBuilderFor('restcountrieseu');
-        $this->assertInstanceOf( ZonesBuilderInterface::class, $builder);
+        $expected = $this->registry->getBuilderByOrder(1);
+        $this->assertInstanceOf(ZonesBuilderInterface::class, $expected);
 
         $this->expectException(MissingBuilderException::class);
-        $this->registry->getBuilderFor('toto');
+        $this->registry->getBuilderByOrder(2);
     }
 }

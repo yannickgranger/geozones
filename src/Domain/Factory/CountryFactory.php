@@ -13,10 +13,9 @@ class CountryFactory
         $country = new Country('', $name, $parent);
         $country->setIsoAlpha2($countryCode);
 
-        if($countryData && array_key_exists(15, $countryData)){
-
-            foreach ($countryData[15] as $languageData){
-                if($languageData){
+        if ($countryData && array_key_exists(15, $countryData)) {
+            foreach ($countryData[15] as $languageData) {
+                if ($languageData) {
                     $name = array_key_exists('name', $languageData) ? $languageData['name'] : '';
                     $iso639_1 = array_key_exists('iso639_1', $languageData) ? $languageData['iso639_1'] : '';
                     $iso639_2 = array_key_exists('iso639_2', $languageData) ? $languageData['iso639_2'] : '';

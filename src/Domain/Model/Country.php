@@ -2,12 +2,10 @@
 
 namespace MyPrm\GeoZones\Domain\Model;
 
-use MyPrm\GeoZones\Domain\Model\Language;
-
 class Country extends AbstractZone
 {
-    private string $isoAlpha2;
-    private string $isoAlpha3;
+    private ?string $isoAlpha2 = null;
+    private ?string $isoAlpha3= null;
     private array $languages = [];
 
 
@@ -28,22 +26,22 @@ class Country extends AbstractZone
         $this->name = $name;
     }
 
-    public function getIsoAlpha2(): string
+    public function getIsoAlpha2(): ?string
     {
         return $this->isoAlpha2;
     }
 
-    public function setIsoAlpha2(string $isoAlpha2): void
+    public function setIsoAlpha2(?string $isoAlpha2): void
     {
         $this->isoAlpha2 = $isoAlpha2;
     }
 
-    public function getIsoAlpha3(): string
+    public function getIsoAlpha3(): ?string
     {
         return $this->isoAlpha3;
     }
 
-    public function setIsoAlpha3(string $isoAlpha3): void
+    public function setIsoAlpha3(?string $isoAlpha3): void
     {
         $this->isoAlpha3 = $isoAlpha3;
     }

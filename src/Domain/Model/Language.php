@@ -19,6 +19,16 @@ class Language
         $this->translations = $translations;
     }
 
+    public function toArray()
+    {
+        return [
+            'name' => $this->getName(),
+            'native_name' => $this->getNativeName(),
+            'iso639_1' => $this->getIso6391(),
+            'iso649_2' => $this->getIso6392()
+        ];
+    }
+
     public function getName(): string
     {
         return $this->name;

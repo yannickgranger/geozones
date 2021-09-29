@@ -2,7 +2,6 @@
 
 namespace MyPrm\GeoZones\Domain\Builder\CountryBuilder;
 
-
 interface CountryDataBuilderInterface
 {
 //    public function getCountriesData(): array;

@@ -2,7 +2,6 @@
 
 namespace MyPrm\GeoZones\Infrastructure\Exception\Listener;
 
-use MyPrm\GeoZones\Domain\Exception\ExternalSourceException;
 use MyPrm\GeoZones\Infrastructure\Exception\BadRequestException;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Config\Definition\Exception\Exception;
@@ -38,7 +37,7 @@ class ExceptionListener
 
         if (
             $exception instanceof Exception
-            || $exception instanceof ExternalSourceException
+            || $exception instanceof \RuntimeException
             && $exception->getCode() === 500
         ) {
             $now = new \DateTime();
@@ -50,7 +49,11 @@ class ExceptionListener
                 ]
             );
 
-            $response = new JsonResponse('An unexpected error occured at '.$now->format('Y-m-d H:i:s').'. Contact customer support for help.', 500);
+            $message = [
+                'Error' => 'Unexpected error occurred at '.$now->format('Y-m-d H:i:s').'. Please contact your customer service if you need help'
+            ];
+
+            $response = new JsonResponse($message, 500);
             $event->setResponse($response);
         }
     }

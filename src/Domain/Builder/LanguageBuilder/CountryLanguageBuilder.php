@@ -36,9 +36,9 @@ class CountryLanguageBuilder implements CountryLanguageBuilderInterface
 
         $lines = explode(PHP_EOL, $strData);
 
-        foreach($lines as $line) {
+        foreach ($lines as $line) {
             $content = explode("\t", $line);
-            if(count($content) > 1){
+            if (count($content) > 1) {
                 $table[] = explode("\t", $line);
             }
         }

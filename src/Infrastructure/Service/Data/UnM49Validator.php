@@ -14,6 +14,7 @@ class UnM49Validator implements DataValidatorInterface
         if (!array_key_exists('fieldNames', $data)) {
             return new Error(__METHOD__, 'Missing key fieldsNames in data provided');
         }
+
         $result = $this->validateFieldsNames($data['fieldNames']);
         if ($result instanceof Error) {
             return $result;

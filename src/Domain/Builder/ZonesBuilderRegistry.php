@@ -10,16 +10,26 @@ use MyPrm\GeoZones\SharedKernel\Error\Error;
 class ZonesBuilderRegistry implements ZonesBuilderRegistryInterface, ZonesBuilderInterface
 {
     private \Traversable $providers;
+    private array $providerNames;
 
-    public function __construct(\Traversable $providers)
+    public function __construct(\Traversable $providers, array $providerNames)
     {
         $this->providers = $providers;
+        $this->providerNames = $providerNames;
+    }
+
+    public function getBuilderByOrder(int $order): ZonesBuilderInterface
+    {
+        if (array_key_exists($order, $this->providerNames)) {
+            return $this->getBuilderFor($this->providerNames[$order]);
+        }
+
+        throw new MissingBuilderException('Unknown zone_builder : '.$order, 500, null);
     }
 
     public function getBuilderFor(string $provider): ZonesBuilderInterface
     {
-        $providers = $this->providers->getIterator();
-        foreach ($providers as $builder) {
+        foreach ($this->providers as $builder) {
             if ($builder->supports($provider)) {
                 return $builder;
             }

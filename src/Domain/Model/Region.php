@@ -16,7 +16,7 @@ class Region extends AbstractZone
 
     public function setSubRegion(SubRegion $subRegion)
     {
-        if(array_key_exists($subRegion->getName(), $this->subRegions)){
+        if (array_key_exists($subRegion->getName(), $this->subRegions)) {
             $this->subRegions[$subRegion->getName()] = $subRegion;
         }
     }

@@ -2,14 +2,14 @@
 
 namespace MyPrm\GeoZones\Domain\Builder\ZonesBuilder;
 
-use MyPrm\GeoZones\Domain\Builder\CountryBuilder\CountryDataBuilder;
+use Assert\Assert;
+use Assert\LazyAssertionException;
 use MyPrm\GeoZones\Domain\Factory\UnM49ZoneFactoryInterface;
 use MyPrm\GeoZones\Domain\Model\World;
 use MyPrm\GeoZones\Domain\Service\Data\Parser\DataParserInterface;
 use MyPrm\GeoZones\Domain\Service\Http\HttpGeoClientInterface;
 use MyPrm\GeoZones\Infrastructure\Service\Data\UnM49Validator;
 use MyPrm\GeoZones\SharedKernel\Error\Error;
-use Symfony\Component\HttpFoundation\JsonResponse;
 
 class UnM49Builder implements ZonesBuilderInterface
 {
@@ -18,24 +18,37 @@ class UnM49Builder implements ZonesBuilderInterface
     private UnM49ZoneFactoryInterface $zoneFactory;
     private UnM49Validator $dataValidator;
     private string $url;
+    private array $acceptedLocales;
 
     public function __construct(
-        HttpGeoClientInterface    $client,
-        CountryDataBuilder        $countryDataBuilder,
-        DataParserInterface       $parser,
-        UnM49Validator            $dataValidator,
+        HttpGeoClientInterface$client,
+        DataParserInterface $parser,
+        UnM49Validator$dataValidator,
         UnM49ZoneFactoryInterface $zoneFactory,
-        string                    $unsdUrl
+        string$unsdUrl,
+        array $unM49acceptedLocales
     ) {
         $this->client = $client;
         $this->parser = $parser;
         $this->zoneFactory = $zoneFactory;
         $this->dataValidator = $dataValidator;
         $this->url = $unsdUrl;
+        $this->acceptedLocales = $unM49acceptedLocales;
     }
 
+    /**
+     * UN M49 methodology has a specific set of locales, others are substituted by 'en' and may be translated
+     *
+     * @param array $parameters
+     * @return World|Error
+     */
     public function build(array $parameters): World|error
     {
+        if (array_key_exists('locale', $parameters) && !in_array($parameters
+            ['locale'], $this->acceptedLocales)) {
+            $parameters['locale'] = 'en';
+        }
+
         $data = $this->getData();
         $data = $this->parseData($data, $parameters);
         $content['fieldNames'] = array_shift($data);

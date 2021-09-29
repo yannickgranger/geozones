@@ -81,6 +81,7 @@ class GeoZonesRequestValidatorTest extends KernelTestCase
                 'Content-type' => 'application/json'
             ]
         ]);
+
         $this->assertEquals(200, $response->getStatusCode());
 
         $response = $client->request('GET', '/api/geozones/sub-regions/es', [
