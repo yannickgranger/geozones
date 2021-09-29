@@ -13,7 +13,7 @@ class World extends AbstractZone
 
     public function addRegion(Region $region)
     {
-        if(!array_key_exists($region->getName(), $this->regions)){
+        if (!array_key_exists($region->getName(), $this->regions)) {
             $this->regions[$region->getName()] = $region;
         }
     }

@@ -11,19 +11,19 @@ class UnM49Validator implements DataValidatorInterface
 {
     public function validateData(array $data): ?Error
     {
-        if(!array_key_exists('fieldNames', $data)){
+        if (!array_key_exists('fieldNames', $data)) {
             return new Error(__METHOD__, 'Missing key fieldsNames in data provided');
         }
         $result = $this->validateFieldsNames($data['fieldNames']);
-        if($result instanceof Error){
+        if ($result instanceof Error) {
             return $result;
         }
 
-        if(!array_key_exists('data', $data)){
+        if (!array_key_exists('data', $data)) {
             return new Error(__METHOD__, 'Missing key data in data provided');
         }
         $result = $this->validateDataTable($data['data']);
-        if($result instanceof Error){
+        if ($result instanceof Error) {
             return $result;
         }
 

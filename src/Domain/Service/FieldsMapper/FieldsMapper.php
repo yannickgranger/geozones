@@ -15,11 +15,11 @@ class FieldsMapper implements FieldsMapperInterface
 
     public function setup(string $provider)
     {
-        $filter =array_filter($this->zonesParameters, function ($row) use($provider) {
+        $filter =array_filter($this->zonesParameters, function ($row) use ($provider) {
             return strtolower($row['provider']) === strtolower($provider);
         });
 
-        if(!empty($filter)){
+        if (!empty($filter)) {
             return array_shift($filter);
         }
 

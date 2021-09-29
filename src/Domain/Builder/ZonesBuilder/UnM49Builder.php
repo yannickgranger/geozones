@@ -42,7 +42,7 @@ class UnM49Builder implements ZonesBuilderInterface
 
         $error = $this->dataValidator->validateData($content);
 
-        if($error instanceof Error){
+        if ($error instanceof Error) {
             return $error;
         }
 

@@ -20,7 +20,7 @@ class GeoZonesRequestValidator implements GeoZonesRequestValidatorInterface
 
     public function validateContentType(string $contentType): bool
     {
-        if(in_array($contentType, $this->acceptedContentType)){
+        if (in_array($contentType, $this->acceptedContentType)) {
             return true;
         }
 
@@ -29,7 +29,7 @@ class GeoZonesRequestValidator implements GeoZonesRequestValidatorInterface
 
     public function validateLevel(string $level): bool
     {
-        if(!in_array($level, $this->validLevels)){
+        if (!in_array($level, $this->validLevels)) {
             return false;
         }
 
@@ -43,20 +43,20 @@ class GeoZonesRequestValidator implements GeoZonesRequestValidatorInterface
 
     public function validate(array $parameters): void
     {
-        if(!$this->validateContentType($parameters['content-type'])){
+        if (!$this->validateContentType($parameters['content-type'])) {
             throw new BadRequestException('Invalid Content-type header : '.$parameters['content-type'], null, 400);
         };
 
         $locale = $parameters['locale'];
-        if(!$this->validateLocale($locale)){
+        if (!$this->validateLocale($locale)) {
             throw new BadRequestException("Locale : '.$locale.' is not accepted", null, 400);
         };
 
         $level =  $parameters['level'];
-        if(!$level){
+        if (!$level) {
             throw new BadRequestException("Invalid ressource requested", null, 400);
         }
-        if(!$this->validateLevel($level)){
+        if (!$this->validateLevel($level)) {
             throw new BadRequestException("Invalid ressource requested", null, 400);
         }
     }
@@ -69,7 +69,7 @@ class GeoZonesRequestValidator implements GeoZonesRequestValidatorInterface
         $locale = $request->getLocale();
         $uri = $request->getRequestUri();
         preg_match('/^\/api\/geozones\/\K\S+/', $uri, $matches);
-        $elements = array_map(function($match){
+        $elements = array_map(function ($match) {
             $level = explode('/', $match);
             return $level[0];
         }, $matches);

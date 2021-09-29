@@ -28,17 +28,17 @@ abstract class AbstractZoneFactory implements AbstractZoneFactoryInterface
     public function createTable(\ArrayIterator $iterator): World|Error
     {
         $iterator = $this->createRegions($iterator);
-        if(!$iterator instanceof \ArrayIterator){
+        if (!$iterator instanceof \ArrayIterator) {
             return $iterator;
         }
 
         $iterator = $this->createSubregions($iterator);
-        if(!$iterator instanceof \ArrayIterator){
+        if (!$iterator instanceof \ArrayIterator) {
             return $iterator;
         }
 
         $iterator = $this->mapCountries($iterator);
-        if(!$iterator instanceof \ArrayIterator){
+        if (!$iterator instanceof \ArrayIterator) {
             return $iterator;
         }
 
@@ -48,9 +48,9 @@ abstract class AbstractZoneFactory implements AbstractZoneFactoryInterface
     public function createRegions(\ArrayIterator $iterator): \Iterator|Error
     {
         $regions = [];
-        for ($iterator->rewind(); $iterator->valid(); $iterator->next()){
+        for ($iterator->rewind(); $iterator->valid(); $iterator->next()) {
             $regionName = $iterator[$iterator->key()][$this->getRegionName()];
-            if(!array_key_exists($regionName, $regions)){
+            if (!array_key_exists($regionName, $regions)) {
                 $region = new Region('', $regionName, $this->world);
                 $regions[$regionName] = $region;
             }
@@ -62,12 +62,12 @@ abstract class AbstractZoneFactory implements AbstractZoneFactoryInterface
 
     public function createSubRegions(\ArrayIterator $iterator): \Iterator|Error
     {
-        for ($iterator->rewind(); $iterator->valid(); $iterator->next()){
+        for ($iterator->rewind(); $iterator->valid(); $iterator->next()) {
             $regionName = $iterator[$iterator->key()][$this->getRegionName()];
             $region = $this->regions[$regionName];
             $subRegions = $region->getSubRegions();
             $subRegionName = $iterator[$iterator->key()][$this->getSubRegionName()];
-            if(!array_key_exists($subRegionName, $subRegions)){
+            if (!array_key_exists($subRegionName, $subRegions)) {
                 $subRegion = new SubRegion('', $subRegionName, $region);
                 $subRegions[$subRegionName] = $subRegion;
             }
@@ -80,7 +80,6 @@ abstract class AbstractZoneFactory implements AbstractZoneFactoryInterface
 
     public function mapCountries(\ArrayIterator $iterator): World|Error
     {
-
     }
 
 

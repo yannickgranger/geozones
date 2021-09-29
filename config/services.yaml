@@ -7,6 +7,10 @@ parameters:
     app_content_types: ['application/json', 'application/xml']
     app_valid_locales: ['de', 'en', 'es', 'fr', 'it', 'nl', 'pl', 'pt']
     app_classif_levels: ['regions', 'sub-regions']
+    cache_ttl: 2592000
+    storage_dir: '%kernel.project_dir%/src/Infrastructure/Storage/Files'
+    storage_cache_dir: '%kernel.project_dir%/src/Infrastructure/Storage/Cache'
+    country_languages_url: '%env(COUNTRY_LANGUAGES_CODES_URL)%'
     language_codes_url: '%env(string:LANGUAGES_CODES_URL)%'
     unsd_url: '%env(UNSD_URL)%'
 
@@ -31,9 +35,10 @@ services:
         autowire: true      # Automatically injects dependencies in your services.
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
         bind:
-            $storageDir: '%kernel.project_dir%/src/Infrastructure/Storage/'
-            $zonesParameters: '%zones_parameters%'
+            $countryLanguagesUrl: '%country_languages_url%'
+            $languagesCodesUrl: '%language_codes_url%'
             $unsdUrl: '%unsd_url%'
+            $zonesParameters: '%zones_parameters%'
 
 
     MyPrm\GeoZones\:
@@ -71,9 +76,19 @@ services:
           - !tagged_iterator zone_builder
 
 
+    MyPrm\GeoZones\Infrastructure\Service\Data\File\Cache\Adapter\Factory\FsAdapterFactory:
+        arguments:
+          - '%storage_cache_dir%'
+          - '%cache_ttl%'
+          - 'geozones'
 
+    app.fs.adapter:
+      class: MyPrm\GeoZones\Infrastructure\Service\Data\File\Cache\Adapter\FsAdapter
+      factory: ['@MyPrm\GeoZones\Infrastructure\Service\Data\File\Cache\Adapter\Factory\FsAdapterFactory', 'getAdapter']
 
-
+    MyPrm\GeoZones\Infrastructure\Service\Data\File\Cache\Adapter\FsAdapter:
+      arguments:
+        - '@app.fs.adapter'
 
 
 

@@ -37,7 +37,7 @@ class Translations
 
     public function addTranslation(Translation $translation)
     {
-        if($translation->getLocale() === $this->getLocale() && !array_key_exists($translation->getKey(), $this->getValues())){
+        if ($translation->getLocale() === $this->getLocale() && !array_key_exists($translation->getKey(), $this->getValues())) {
             $this->values[$translation->getKey()] = $translation;
         }
     }

@@ -20,3 +20,7 @@
 .phpunit-watcher.yml
 .phpunit.result.cache
 .idea
+log
+
+.php-cs-fixer.cache
+src/Infrastructure/Storage/Cache

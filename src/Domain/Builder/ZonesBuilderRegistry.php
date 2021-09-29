@@ -19,8 +19,8 @@ class ZonesBuilderRegistry implements ZonesBuilderRegistryInterface, ZonesBuilde
     public function getBuilderFor(string $provider): ZonesBuilderInterface
     {
         $providers = $this->providers->getIterator();
-        foreach ($providers as $builder){
-            if($builder->supports($provider)){
+        foreach ($providers as $builder) {
+            if ($builder->supports($provider)) {
                 return $builder;
             }
         }
