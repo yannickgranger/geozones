@@ -1,11 +1,10 @@
 <?php
 
-namespace MyPrm\GeoZones\Infrastructure\Service\Data;
+namespace MyPrm\GeoZones\Domain\Service\Data\Validator;
 
 use Assert\Assert;
 use Assert\LazyAssertionException;
 use MyPrm\GeoZones\Domain\Exception\ExternalSourceException;
-use MyPrm\GeoZones\Domain\Service\Data\Validator\DataValidatorInterface;
 use MyPrm\GeoZones\SharedKernel\Error\Error;
 
 class LanguageDataValidator implements DataValidatorInterface

@@ -2,13 +2,12 @@
 
 namespace MyPrm\GeoZones\Domain\Builder\ZonesBuilder;
 
-use Assert\Assert;
-use Assert\LazyAssertionException;
 use MyPrm\GeoZones\Domain\Factory\UnM49ZoneFactoryInterface;
 use MyPrm\GeoZones\Domain\Model\World;
 use MyPrm\GeoZones\Domain\Service\Data\Parser\DataParserInterface;
+use MyPrm\GeoZones\Domain\Service\Data\Parser\UnM49Parser;
+use MyPrm\GeoZones\Domain\Service\Data\Validator\UnM49Validator;
 use MyPrm\GeoZones\Domain\Service\Http\HttpGeoClientInterface;
-use MyPrm\GeoZones\Infrastructure\Service\Data\UnM49Validator;
 use MyPrm\GeoZones\SharedKernel\Error\Error;
 
 class UnM49Builder implements ZonesBuilderInterface
@@ -21,11 +20,11 @@ class UnM49Builder implements ZonesBuilderInterface
     private array $acceptedLocales;
 
     public function __construct(
-        HttpGeoClientInterface$client,
-        DataParserInterface $parser,
-        UnM49Validator$dataValidator,
+        HttpGeoClientInterface $client,
+        UnM49Parser $parser,
+        UnM49Validator $dataValidator,
         UnM49ZoneFactoryInterface $zoneFactory,
-        string$unsdUrl,
+        string $unsdUrl,
         array $unM49acceptedLocales
     ) {
         $this->client = $client;

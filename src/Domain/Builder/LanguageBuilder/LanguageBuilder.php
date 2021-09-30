@@ -5,8 +5,8 @@ namespace MyPrm\GeoZones\Domain\Builder\LanguageBuilder;
 use MyPrm\GeoZones\Domain\Exception\ExternalSourceException;
 use MyPrm\GeoZones\Domain\Factory\LanguageFactoryInterface;
 use MyPrm\GeoZones\Domain\Service\Data\Validator\DataValidatorInterface;
+use MyPrm\GeoZones\Domain\Service\Data\Validator\LanguageDataValidator;
 use MyPrm\GeoZones\Domain\Service\Http\HttpGeoClientInterface;
-use MyPrm\GeoZones\Infrastructure\Service\Data\LanguageDataValidator;
 
 class LanguageBuilder implements LanguageBuilderInterface
 {

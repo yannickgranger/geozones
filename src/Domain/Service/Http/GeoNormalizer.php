@@ -1,16 +1,14 @@
 <?php
 
-namespace MyPrm\GeoZones\Infrastructure\Service\Http\Serializer\Normalizer;
+namespace MyPrm\GeoZones\Domain\Service\Http;
 
 use MyPrm\GeoZones\Domain\Model\Country;
 use MyPrm\GeoZones\Domain\Model\Region;
 use MyPrm\GeoZones\Domain\Model\SubRegion;
 use MyPrm\GeoZones\Domain\Model\World;
-use MyPrm\GeoZones\Domain\Service\Http\GeoNormalizerInterface;
-use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Component\Serializer\SerializerAwareTrait;
 
-class GeoNormalizer implements GeoNormalizerInterface, NormalizerInterface
+class GeoNormalizer implements GeoNormalizerInterface
 {
     use SerializerAwareTrait;
 
@@ -20,13 +18,14 @@ class GeoNormalizer implements GeoNormalizerInterface, NormalizerInterface
         if ($level === 'sub-regions') {
             return $this->getSubRegions($object);
         }
-        return  $this->getRegions($object);
+        return  $this->getRegions($object, $level);
     }
-    private function getRegions(World $world): array
+
+    private function getRegions(World $world, string $level): array
     {
         $regions = [];
         foreach ($world->getRegions() as $region) {
-            $countries = $this->getCountriesFromRegion($region);
+            $countries = $this->getCountriesFromRegion($region, $level);
             $region = [
                 'name' => $regionName = $region->getName(),
                 'countries' => $countries
@@ -69,14 +68,23 @@ class GeoNormalizer implements GeoNormalizerInterface, NormalizerInterface
         return $regions;
     }
 
-    private function getCountriesFromRegion(Region $region): array
+    private function getCountriesFromRegion(Region $region, string $level): array
     {
         $countries = [];
-
-        foreach ($region->getSubRegions() as $subRegion) {
+        if ($level === 'sub-regions') {
+            foreach ($region->getSubRegions() as $subRegion) {
+                $countryList = array_map(static function (Country $country) {
+                    return $country->toArray();
+                }, $subRegion->getCountries());
+                foreach ($countryList as $country) {
+                    $countries[] = $country;
+                }
+            }
+        }
+        if ($level === 'regions') {
             $countryList = array_map(static function (Country $country) {
                 return $country->toArray();
-            }, $subRegion->getCountries());
+            }, $region->getCountries());
             foreach ($countryList as $country) {
                 $countries[] = $country;
             }
@@ -94,10 +102,5 @@ class GeoNormalizer implements GeoNormalizerInterface, NormalizerInterface
         }, array($iterator));
 
         return array_values(iterator_to_array($iterator));
-    }
-
-    public function supportsNormalization($data, string $format = null)
-    {
-        return $data instanceof World;
     }
 }

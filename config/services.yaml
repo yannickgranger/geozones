@@ -12,6 +12,7 @@ parameters:
     storage_cache_dir: '%kernel.project_dir%/src/Infrastructure/Storage/Cache'
     country_languages_url: '%env(COUNTRY_LANGUAGES_CODES_URL)%'
     language_codes_url: '%env(string:LANGUAGES_CODES_URL)%'
+    rest_eu_url: '%env(string:REST_COUNTRIES_URL)%'
     unsd_url: '%env(UNSD_URL)%'
     unsd_accepted_locales: ['en', 'zh', 'ru', 'fr', 'es', 'ar']
     zones_builders: [
@@ -22,10 +23,9 @@ parameters:
         - provider: restCountriesEu
           globalCode: 001
           regionName: region
-          subRegionName: subregion
           countryName: name
-          alpha2: alpha2code
-          alpha3: alpha3code
+          alpha2: alpha2Code
+          alpha3: alpha3Code
         - provider: unM49
           globalCode: 001
           regionName: 3
@@ -41,6 +41,7 @@ services:
         bind:
             $countryLanguagesUrl: '%country_languages_url%'
             $languagesCodesUrl: '%language_codes_url%'
+            $restEuUrl: '%rest_eu_url%'
             $unsdUrl: '%unsd_url%'
             $zonesParameters: '%zones_parameters%'
             $cacheTtl: '%cache_ttl%'
