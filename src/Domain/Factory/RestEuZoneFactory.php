@@ -3,11 +3,8 @@
 namespace MyPrm\GeoZones\Domain\Factory;
 
 use MyPrm\GeoZones\Domain\Builder\CountryBuilder\CountryDataBuilderInterface;
-use MyPrm\GeoZones\Domain\Model\AbstractZone;
-use MyPrm\GeoZones\Domain\Model\World;
 use MyPrm\GeoZones\Domain\Service\Data\File\Cache\CacheAdapterInterface;
 use MyPrm\GeoZones\Domain\Service\FieldsMapper\FieldsMapperInterface;
-use MyPrm\GeoZones\SharedKernel\Error\Error;
 
 class RestEuZoneFactory extends AbstractZoneFactory implements RestEuZoneFactoryInterface
 {
@@ -37,17 +34,26 @@ class RestEuZoneFactory extends AbstractZoneFactory implements RestEuZoneFactory
         $countries = [];
         for ($iterator->rewind(); $iterator->valid(); $iterator->next()) {
             $current = $iterator->current();
-            $countryName = $current[$this->getCountryName()];
+
             $countryCode = strtolower($current[$this->getAlpha2()]);
+            $countryName = $current[$this->getCountryName()];
+            $regionName = $current[$this->getRegionName()];
+
             $countryDataFilter = array_filter(
                 $this->countriesData,
                 function ($row) use ($countryCode) {
                     return strtolower($row[0]) === $countryCode;
                 }
             );
+
             $countryData = array_pop($countryDataFilter);
             if (is_array($countryData)) {
-                $countries[$countryName] = CountryFactory::buildCountry($countryName, $countryCode, $countryData);
+                $countries[$countryName] = CountryFactory::buildCountry(
+                    $countryCode,
+                    $countryName,
+                    $regionName,
+                    $countryData
+                );
             }
         }
         ksort($countries);

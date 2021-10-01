@@ -14,12 +14,10 @@ class UnM49ZoneFactory extends AbstractZoneFactory implements UnM49ZoneFactoryIn
 
     public function __construct(
         CacheAdapterInterface $cacheAdapter,
-        CountryFactory $countryFactory,
         CountryDataBuilderInterface $countryDataBuilder,
         FieldsMapperInterface $fieldsMapper
     ) {
         $this->cacheAdapter = $cacheAdapter;
-        $this->countryFactory = $countryFactory;
         $this->countryDataBuilder = $countryDataBuilder;
         $this->parameters = $fieldsMapper->setup(self::PROVIDER);
     }

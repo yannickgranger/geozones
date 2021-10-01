@@ -7,7 +7,7 @@ use MyPrm\GeoZones\Domain\Model\Language;
 
 class CountryFactory
 {
-    public static function buildCountry(string $countryCode, string $name, string $regionName, array $countryData, ?string $subRegionName): Country
+    public static function buildCountry(string $countryCode, string $name, string $regionName, array $countryData, ?string $subRegionName = null): Country
     {
         $country = new Country('', $name, null);
         $country->setIsoAlpha2($countryCode);

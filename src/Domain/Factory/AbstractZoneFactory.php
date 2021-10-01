@@ -14,18 +14,15 @@ abstract class AbstractZoneFactory
     protected CountryFactory $countryFactory;
     protected array $countriesData;
 
-    public function build(array $data): World|Error
-    {
-        $iterator = $this->instanciate($data);
-        return $this->createTable($iterator);
-    }
-
     public function instanciate(array $data): \ArrayIterator
     {
         $this->world = new World($this->getGlobalCode(), 'World', null);
         return new \ArrayIterator($data);
     }
 
+    /**
+     * @throws \Exception
+     */
     public function createTable(\ArrayIterator $iterator, string $level): World|Error
     {
         $world = $this->world;
@@ -81,7 +78,7 @@ abstract class AbstractZoneFactory
     }
 
     /**
-     * This method belongs to implem, because of fields mapping
+     * This method belongs to implementation, because of fields mapping details
      */
     public function getCountries(\ArrayIterator $iterator): array
     {

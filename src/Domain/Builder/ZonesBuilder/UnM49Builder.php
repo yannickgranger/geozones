@@ -40,6 +40,7 @@ class UnM49Builder implements ZonesBuilderInterface
      *
      * @param array $params
      * @return World|Error
+     * @throws \Exception
      */
     public function build(array $params): World|error
     {

@@ -38,9 +38,9 @@ class RestCountriesEuBuilder implements ZonesBuilderInterface
         $this->url = $restEuUrl;
     }
 
-    public function build(array $parameters): World|Error
+    public function build(array $params): World|Error
     {
-        if (array_key_exists('level', $parameters) && $parameters['level'] === "sub-regions") {
+        if (array_key_exists('level', $params) && $params['level'] === "sub-regions") {
             return new Error(
                 __METHOD__,
                 "sub-regions classification level is not available on restcountries.eu",
@@ -49,14 +49,13 @@ class RestCountriesEuBuilder implements ZonesBuilderInterface
         }
 
         $data = $this->getData();
-        $data = $this->parseData($data[0], $parameters);
+        $data = $this->parseData($data[0], $params);
         $error = $this->dataValidator->validateData($data);
         if ($error instanceof Error) {
             return $error;
         }
-        $iterator = $this->zoneFactory->instanciate($data);
-        $iterator = $this->zoneFactory->createTable($iterator, $level);
-        return $this->zoneFactory->mapCountries($iterator);
+        $data = $this->zoneFactory->instanciate($data);
+        return $this->zoneFactory->createTable($data, $params['level']);
     }
 
     public function getData()
