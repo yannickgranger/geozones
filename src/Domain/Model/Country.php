@@ -6,8 +6,9 @@ class Country extends AbstractZone
 {
     private ?string $isoAlpha2 = null;
     private ?string $isoAlpha3= null;
+    private ?string $regionName = null;
+    private ?string $subRegionName = null;
     private array $languages = [];
-
 
     public function addLanguage(Language $language): void
     {
@@ -44,6 +45,24 @@ class Country extends AbstractZone
     public function setIsoAlpha3(?string $isoAlpha3): void
     {
         $this->isoAlpha3 = $isoAlpha3;
+    }
+
+    public function getRegionName(): ?string
+    {
+        return $this->regionName;
+    }
+    public function setRegionName(?string $regionName): void
+    {
+        $this->regionName = $regionName;
+    }
+    public function getSubRegionName(): ?string
+    {
+        return $this->subRegionName;
+    }
+
+    public function setSubRegionName(?string $subRegionName): void
+    {
+        $this->subRegionName = $subRegionName;
     }
 
     public function toArray(): array

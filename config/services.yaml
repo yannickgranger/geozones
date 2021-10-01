@@ -6,7 +6,7 @@
 parameters:
     app_content_types: ['application/json', 'application/xml']
     app_valid_locales: ['de', 'en', 'es', 'fr', 'it', 'nl', 'pl', 'pt']
-    app_classif_levels: ['regions', 'sub-regions']
+    app_classif_levels: ['world', 'regions', 'sub-regions']
     cache_ttl: 2592000
     storage_dir: '%kernel.project_dir%/src/Infrastructure/Storage/Files'
     storage_cache_dir: '%kernel.project_dir%/src/Infrastructure/Storage/Cache'

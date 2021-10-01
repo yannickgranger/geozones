@@ -6,6 +6,7 @@ abstract class AbstractZone
 {
     protected string $providerId;
     protected string $name;
+    protected ?array $countries = [];
     protected ?AbstractZone $parent;
     protected ?Translations $translations;
 
@@ -39,5 +40,21 @@ abstract class AbstractZone
     public function getParent(): ?AbstractZone
     {
         return $this->parent;
+    }
+
+    public function setParent(?AbstractZone $parent)
+    {
+        $this->parent = $parent;
+        return $this;
+    }
+
+    public function getCountries(): array
+    {
+        return $this->countries;
+    }
+
+    public function setCountries(array $countries): void
+    {
+        $this->countries = $countries;
     }
 }

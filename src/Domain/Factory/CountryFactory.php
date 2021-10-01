@@ -2,16 +2,20 @@
 
 namespace MyPrm\GeoZones\Domain\Factory;
 
-use MyPrm\GeoZones\Domain\Model\AbstractZone;
 use MyPrm\GeoZones\Domain\Model\Country;
 use MyPrm\GeoZones\Domain\Model\Language;
 
 class CountryFactory
 {
-    public function buildCountry(string $name, string $countryCode, array $countryData, ?AbstractZone $parent)
+    public static function buildCountry(string $countryCode, string $name, string $regionName, array $countryData, ?string $subRegionName): Country
     {
-        $country = new Country('', $name, $parent);
+        $country = new Country('', $name, null);
         $country->setIsoAlpha2($countryCode);
+        $country->setRegionName($regionName);
+        if ($subRegionName !== null) {
+            $country->setSubRegionName($subRegionName);
+        }
+
 
         if ($countryData && array_key_exists(15, $countryData)) {
             foreach ($countryData[15] as $languageData) {

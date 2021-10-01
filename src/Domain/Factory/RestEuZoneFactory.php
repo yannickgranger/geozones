@@ -3,6 +3,7 @@
 namespace MyPrm\GeoZones\Domain\Factory;
 
 use MyPrm\GeoZones\Domain\Builder\CountryBuilder\CountryDataBuilderInterface;
+use MyPrm\GeoZones\Domain\Model\AbstractZone;
 use MyPrm\GeoZones\Domain\Model\World;
 use MyPrm\GeoZones\Domain\Service\Data\File\Cache\CacheAdapterInterface;
 use MyPrm\GeoZones\Domain\Service\FieldsMapper\FieldsMapperInterface;
@@ -16,32 +17,15 @@ class RestEuZoneFactory extends AbstractZoneFactory implements RestEuZoneFactory
 
     public function __construct(
         CacheAdapterInterface $cacheAdapter,
-        CountryFactory $countryFactory,
         CountryDataBuilderInterface $countryDataBuilder,
         FieldsMapperInterface $fieldsMapper
     ) {
         $this->cacheAdapter = $cacheAdapter;
-        $this->countryFactory = $countryFactory;
         $this->countryDataBuilder = $countryDataBuilder;
         $this->parameters = $fieldsMapper->setup(self::PROVIDER);
     }
 
-    public function createTable(\ArrayIterator $iterator): World|Error
-    {
-        $iterator = $this->createRegions($iterator);
-        if (!$iterator instanceof \ArrayIterator) {
-            return $iterator;
-        }
-
-        $iterator = $this->mapCountries($iterator);
-        if (!$iterator instanceof \ArrayIterator) {
-            return $iterator;
-        }
-
-        return $this->world->setRegions($this->mapCountries($iterator));
-    }
-
-    public function mapCountries(\ArrayIterator $iterator): World|Error
+    public function getCountries(\ArrayIterator $iterator): array
     {
         $cacheData = $this->cacheAdapter->get('countriesData.json');
         if (!$cacheData) {
@@ -50,30 +34,23 @@ class RestEuZoneFactory extends AbstractZoneFactory implements RestEuZoneFactory
         }
         $this->countriesData = json_decode($cacheData, true);
 
+        $countries = [];
         for ($iterator->rewind(); $iterator->valid(); $iterator->next()) {
             $current = $iterator->current();
             $countryName = $current[$this->getCountryName()];
             $countryCode = strtolower($current[$this->getAlpha2()]);
-            $regionName = $current[$this->getRegionName()];
-
-            $region = $this->regions[$regionName];
-            $parent = $region;
-
             $countryDataFilter = array_filter(
                 $this->countriesData,
                 function ($row) use ($countryCode) {
                     return strtolower($row[0]) === $countryCode;
                 }
             );
-
             $countryData = array_pop($countryDataFilter);
             if (is_array($countryData)) {
-                $country = $this->countryFactory->buildCountry($countryName, $countryCode, $countryData, $parent);
-                $region->addCountry($country);
-                $this->regions[$regionName] = $region;
+                $countries[$countryName] = CountryFactory::buildCountry($countryName, $countryCode, $countryData);
             }
         }
-
-        return $this->world->setRegions($this->regions);
+        ksort($countries);
+        return $countries;
     }
 }

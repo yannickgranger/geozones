@@ -5,7 +5,6 @@ namespace MyPrm\GeoZones\Domain\Model;
 class Region extends AbstractZone
 {
     private array $subRegions = [];
-    private array $countries = [];
 
     public function addSubRegion(SubRegion $subRegion): void
     {
@@ -41,7 +40,7 @@ class Region extends AbstractZone
 
     public function addCountry(AbstractZone $country): void
     {
-        $this->countries[] = $country;
+        $this->countries[$country->getName()] = $country;
     }
 
     public function getCountries(): array

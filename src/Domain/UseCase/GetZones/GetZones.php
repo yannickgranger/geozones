@@ -25,15 +25,15 @@ class GetZones
         $isValid = $this->validateRequest($request, $response);
 
 
-        if ($isValid) {
+//        if ($isValid) {
 //            try {
-//                $builder = $this->builderRegistry->getBuilderByOrder(0);
-//                $result = $builder->build($request->getParams());
+        $builder = $this->builderRegistry->getBuilderByOrder(0);
+        $result = $builder->build($request->getParams());
 //            } catch (\Exception $exception) {
-            $builder = $this->builderRegistry->getBuilderByOrder(1);
-            $result = $builder->build($request->getParams());
+//                $builder = $this->builderRegistry->getBuilderByOrder(1);
+//                $result = $builder->build($request->getParams());
 //            }
-        }
+//        }
 
         if ($result instanceof World) {
             $response->setWorld($result);

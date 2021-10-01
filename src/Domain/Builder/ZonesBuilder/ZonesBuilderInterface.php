@@ -8,7 +8,7 @@ use MyPrm\GeoZones\SharedKernel\Error\Error;
 interface ZonesBuilderInterface
 {
     public function getData();
-    public function parseData($data, array $parameters);
+    public function parseData($data, array $parameters): array;
     public function build(array $parameters): World|error;
     public function supports(string $provider): bool;
 }

@@ -53,6 +53,7 @@ class GeoZonesRequestValidator implements GeoZonesRequestValidatorInterface
         };
 
         $level =  $parameters['level'];
+
         if (!$level) {
             throw new BadRequestException("Invalid ressource requested", null, 400);
         }

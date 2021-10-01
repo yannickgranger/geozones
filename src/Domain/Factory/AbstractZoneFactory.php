@@ -7,11 +7,10 @@ use MyPrm\GeoZones\Domain\Model\SubRegion;
 use MyPrm\GeoZones\Domain\Model\World;
 use MyPrm\GeoZones\SharedKernel\Error\Error;
 
-abstract class AbstractZoneFactory implements AbstractZoneFactoryInterface
+abstract class AbstractZoneFactory
 {
     protected World $world;
     protected array $parameters = [];
-    protected array $regions = [];
     protected CountryFactory $countryFactory;
     protected array $countriesData;
 
@@ -27,27 +26,25 @@ abstract class AbstractZoneFactory implements AbstractZoneFactoryInterface
         return new \ArrayIterator($data);
     }
 
-    public function createTable(\ArrayIterator $iterator): World|Error
+    public function createTable(\ArrayIterator $iterator, string $level): World|Error
     {
-        $iterator = $this->createRegions($iterator);
-        if (!$iterator instanceof \ArrayIterator) {
-            return $iterator;
-        }
+        $world = $this->world;
+        switch ($level) {
+            case 'regions':
+                $world = $this->createRegions($iterator, $world);
+                break;
+            case 'sub-regions':
+                $world = $this->createRegions($iterator, $world);
+                $world = $this->createSubRegions($iterator, $world);
+                break;
 
-        $iterator = $this->createSubregions($iterator);
-        if (!$iterator instanceof \ArrayIterator) {
-            return $iterator;
-        }
+        };
 
-        $iterator = $this->mapCountries($iterator);
-        if (!$iterator instanceof \ArrayIterator) {
-            return $iterator;
-        }
-
-        return $this->world->setRegions($this->mapCountries($iterator));
+        $countries = $this->getCountries($iterator);
+        return $this->mapCountries($world, $countries, $level);
     }
 
-    public function createRegions(\ArrayIterator $iterator): \Iterator|Error
+    public function createRegions(\ArrayIterator $iterator, World $world): World|Error
     {
         $regions = [];
         for ($iterator->rewind(); $iterator->valid(); $iterator->next()) {
@@ -58,15 +55,16 @@ abstract class AbstractZoneFactory implements AbstractZoneFactoryInterface
             }
         }
         ksort($regions);
-        $this->regions = $regions;
-        return $iterator;
+        $world->setRegions($regions);
+        return $world;
     }
 
-    public function createSubRegions(\ArrayIterator $iterator): \Iterator|Error
+    public function createSubRegions(\ArrayIterator $iterator, World $world): World|Error
     {
         for ($iterator->rewind(); $iterator->valid(); $iterator->next()) {
             $regionName = $iterator[$iterator->key()][$this->getRegionName()];
-            $region = $this->regions[$regionName];
+            $regions = $world->getRegions();
+            $region = $regions[$regionName];
             $subRegions = $region->getSubRegions();
             $subRegionName = $iterator[$iterator->key()][$this->getSubRegionName()];
             if (!array_key_exists($subRegionName, $subRegions)) {
@@ -75,16 +73,55 @@ abstract class AbstractZoneFactory implements AbstractZoneFactoryInterface
             }
             ksort($subRegions);
             $region->setSubRegions($subRegions);
-            $this->regions[$regionName] = $region;
+            $regions[$regionName] = $region;
+            ksort($regions);
+            $world->setRegions($regions);
         }
-        return $iterator;
+        return $world;
     }
 
-    public function mapCountries(\ArrayIterator $iterator): World|Error
+    /**
+     * This method belongs to implem, because of fields mapping
+     */
+    public function getCountries(\ArrayIterator $iterator): array
     {
-        return new Error('TBD: // implements mapCountries method');
+        throw new \Exception('TBD:// Implement method '.__METHOD__);
     }
 
+    public function mapCountries(World $world, array $countries, string $level): World|Error
+    {
+        $iterator = new \ArrayIterator($countries);
+        switch ($level) {
+            case 'world':
+                for ($iterator->rewind(); $iterator->valid(); $iterator->next()) {
+                    $current = $iterator->current();
+                    $current->setParent($world);
+                }
+                $world->setCountries(iterator_to_array($iterator));
+                break;
+            case 'regions':
+                $regions = $world->getRegions();
+                for ($iterator->rewind(); $iterator->valid(); $iterator->next()) {
+                    $current = $iterator->current();
+                    $region = $regions[$current->getRegionName()];
+                    $region->addCountry($current);
+                    $current->setParent($region);
+                }
+                break;
+            case 'sub-regions':
+                $regions = $world->getRegions();
+                for ($iterator->rewind(); $iterator->valid(); $iterator->next()) {
+                    $current = $iterator->current();
+                    $region = $regions[$current->getRegionName()];
+                    $subRegions = $region->getSubRegions();
+                    $subRegion = $subRegions[$current->getSubRegionName()];
+                    $subRegion->addCountry($current);
+                    $current->setParent($subRegion);
+                }
+        }
+
+        return $world;
+    }
 
     protected function getGlobalCode(): ?string
     {

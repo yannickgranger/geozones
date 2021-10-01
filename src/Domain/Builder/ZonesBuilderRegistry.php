@@ -49,7 +49,7 @@ class ZonesBuilderRegistry implements ZonesBuilderRegistryInterface, ZonesBuilde
         return false;
     }
 
-    public function parseData($data, array $parameters)
+    public function parseData($data, array $parameters): array
     {
         return [];
     }

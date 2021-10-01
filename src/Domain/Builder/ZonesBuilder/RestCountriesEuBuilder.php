@@ -55,7 +55,8 @@ class RestCountriesEuBuilder implements ZonesBuilderInterface
             return $error;
         }
         $iterator = $this->zoneFactory->instanciate($data);
-        return $this->zoneFactory->createTable($iterator);
+        $iterator = $this->zoneFactory->createTable($iterator, $level);
+        return $this->zoneFactory->mapCountries($iterator);
     }
 
     public function getData()
@@ -63,7 +64,7 @@ class RestCountriesEuBuilder implements ZonesBuilderInterface
         return $this->client->doRequest($this->url);
     }
 
-    public function parseData($data, array $parameters)
+    public function parseData($data, array $parameters): array
     {
         return $this->parser->parse($data, $parameters);
     }

@@ -4,8 +4,6 @@ namespace MyPrm\GeoZones\Domain\Model;
 
 class SubRegion extends AbstractZone
 {
-    private array $countries = [];
-
     public function getCountries(): array
     {
         return $this->countries;
