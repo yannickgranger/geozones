@@ -76,11 +76,13 @@ class GeoZonesRequestValidator implements GeoZonesRequestValidatorInterface
         }, $matches);
 
         $level = $elements[0] ?? null;
+        $format = explode('/', $contentType);
 
         return [
             'locale' => $locale,
             'content-type' => $contentType,
-            'level' => $level
+            'level' => $level,
+            'cacheKey' => $level.'-'.$locale.'-'.$format[1]
         ];
     }
 }

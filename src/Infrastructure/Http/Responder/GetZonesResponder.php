@@ -43,7 +43,6 @@ class GetZonesResponder implements GetZonesResponderInterface
             );
             $response = new Response($xml, $statusCode);
             $response->headers->set('Content-Type', 'text/xml');
-            return $response;
         }
 
         return $response;
