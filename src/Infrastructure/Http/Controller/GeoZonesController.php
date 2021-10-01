@@ -44,7 +44,7 @@ class GeoZonesController
         $requestParams['cacheTtl'] = $this->cacheTtl;
         $this->requestValidator->validate($requestParams);
 
-        return $this->cache->get($requestParams['cacheKey'], function (ItemInterface $item) use($requestParams){
+        return $this->cache->get($requestParams['cacheKey'], function (ItemInterface $item) use ($requestParams) {
             $item->expiresAfter($requestParams['cacheTtl']);
             $this->getZones->execute(
                 new GetZonesRequest($requestParams),

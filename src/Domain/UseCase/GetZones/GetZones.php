@@ -6,16 +6,21 @@ use Assert\Assert;
 use Assert\LazyAssertionException;
 use MyPrm\GeoZones\Domain\Builder\ZonesBuilderRegistryInterface;
 use MyPrm\GeoZones\Domain\Model\World;
+use MyPrm\GeoZones\Domain\Service\Data\Translation\DomainTranslatorInterface;
 use MyPrm\GeoZones\Presentation\GetZones\GetZonesPresenterInterface;
 use MyPrm\GeoZones\SharedKernel\Error\Error;
 
 class GetZones
 {
     private ZonesBuilderRegistryInterface $builderRegistry;
+    private DomainTranslatorInterface $domainTranslator;
 
-    public function __construct(ZonesBuilderRegistryInterface $builderRegistry)
-    {
+    public function __construct(
+        DomainTranslatorInterface $domainTranslator,
+        ZonesBuilderRegistryInterface $builderRegistry
+    ) {
         $this->builderRegistry = $builderRegistry;
+        $this->domainTranslator = $domainTranslator;
     }
 
     public function execute(GetZonesRequest $request, GetZonesPresenterInterface $presenter)
@@ -34,6 +39,8 @@ class GetZones
                 $result = $builder->build($request->getParams());
             }
         }
+
+//        $result = $this->translator->translate($request->getParams());
 
         if ($result instanceof World) {
             $response->setWorld($result);
