@@ -1,6 +1,6 @@
 <?php
 
-namespace MyPrm\GeoZones\Tests\Builder;
+namespace GeoZonesTests\Builder;
 
 use MyPrm\GeoZones\Domain\Builder\ZonesBuilder\RestCountriesEuBuilder;
 use MyPrm\GeoZones\Domain\Builder\ZonesBuilder\UnM49Builder;

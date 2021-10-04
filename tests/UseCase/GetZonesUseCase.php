@@ -1,6 +1,6 @@
 <?php
 
-namespace MyPrm\GeoZones\Tests\UseCase;
+namespace GeoZonesTests\UseCase;
 
 use PHPUnit\Framework\TestCase;
 
