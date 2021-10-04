@@ -4,22 +4,100 @@
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
 parameters:
+    app_content_types: ['application/json', 'application/xml']
+    app_valid_locales: ['de', 'en', 'es', 'fr', 'it', 'nl', 'pl', 'pt']
+    app_classif_levels: ['world', 'regions', 'sub-regions']
+    cache_ttl: 2592000
+    storage_dir: '%kernel.project_dir%/src/Infrastructure/Storage/Files'
+    storage_cache_dir: '%kernel.project_dir%/src/Infrastructure/Storage/Cache'
+    country_languages_url: '%env(COUNTRY_LANGUAGES_CODES_URL)%'
+    language_codes_url: '%env(string:LANGUAGES_CODES_URL)%'
+    rest_eu_url: '%env(string:REST_COUNTRIES_URL)%'
+    unsd_url: '%env(UNSD_URL)%'
+    unsd_accepted_locales: ['en', 'zh', 'ru', 'fr', 'es', 'ar']
+    zones_builders: [
+        'unm49',
+        'restcountrieseu'
+    ]
+    zones_parameters:
+        - provider: restCountriesEu
+          globalCode: 001
+          regionName: region
+          countryName: name
+          alpha2: alpha2Code
+          alpha3: alpha3Code
+        - provider: unM49
+          globalCode: 001
+          regionName: 3
+          subRegionName: 5
+          countryName: 8
+          alpha2: 10
+          alpha3: 11
 
 services:
-    # default configuration for services in *this* file
     _defaults:
         autowire: true      # Automatically injects dependencies in your services.
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+        bind:
+            $countryLanguagesUrl: '%country_languages_url%'
+            $languagesCodesUrl: '%language_codes_url%'
+            $restEuUrl: '%rest_eu_url%'
+            $unsdUrl: '%unsd_url%'
+            $zonesParameters: '%zones_parameters%'
+            $cacheTtl: '%cache_ttl%'
+            $unM49acceptedLocales: '%unsd_accepted_locales%'
 
-    # makes classes in src/ available to be used as services
-    # this creates a service per class whose id is the fully-qualified class name
-    App\:
-        resource: '../src/'
+    GeoZones\:
+        resource: '../src/GeoZones/'
         exclude:
-            - '../src/DependencyInjection/'
-            - '../src/Entity/'
-            - '../src/Kernel.php'
-            - '../src/Tests/'
+            - '../src/GeoZones/Domain/Entity'
+    Symfony5\:
+        resource: '../src/Infrastructure/Symfony5/'
 
-    # add more service definitions when explicit configuration is needed
-    # please note that last definitions always *replace* previous ones
+    Symfony5\Http\Controller\:
+        resource: '../src/Infrastructure/Symfony5/Http/Controller/'
+        tags: ['controller.service_arguments']
+
+    Symfony5\Http\Validator\GeoZonesRequestValidator:
+        arguments:
+            - '%app_content_types%'
+            - '%app_valid_locales%'
+            - '%app_classif_levels%'
+
+    GeoZones\Domain\Builder\ZonesBuilder\:
+        resource: '../src/GeoZones/Domain/Builder/ZonesBuilder/'
+        tags:
+            - { name: zone_builder }
+
+    GeoZones\Domain\Builder\ZonesBuilderRegistry:
+        class: GeoZones\Domain\Builder\ZonesBuilderRegistry
+        arguments:
+          - !tagged_iterator zone_builder
+          - '%zones_builders%'
+
+    Symfony5\Service\Data\File\Cache\Adapter\Factory\FsAdapterFactory:
+        arguments:
+          - '%storage_cache_dir%'
+          - '%cache_ttl%'
+          - 'geozones'
+
+    app.fs.adapter:
+      class: Symfony5\Service\Data\File\Cache\Adapter\FsAdapter
+      factory: ['Symfony5\Service\Data\File\Cache\Adapter\Factory\FsAdapterFactory', 'getAdapter']
+
+    Symfony5\Service\Data\File\Cache\Adapter\FsAdapter:
+      arguments:
+        - '@app.fs.adapter'
+
+    Symfony5\Exception\Listener\ExceptionListener:
+      tags:
+        - { name: kernel.event_listener, event: kernel.exception }
+
+
+
+
+
+
+
+
+

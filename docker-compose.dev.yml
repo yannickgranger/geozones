@@ -1,0 +1,65 @@
+version: '3.4'
+services:
+
+  traefik:
+    image: "traefik:v2.5"
+    container_name: traefik
+    command:
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.http.address=:80"
+    networks:
+      myprm_nw:
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8080:8080"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+
+  nginx_geo:
+    container_name: nginx_geo
+    image: nginx:1.20-alpine
+    depends_on:
+      - geo_fpm
+    networks:
+      myprm_nw:
+        aliases:
+          - "geo-v2.myprm.local"
+    volumes:
+      - "./geozones/public:/srv/app/public:rw"
+      - "./.docker/nginx/conf.d/default-geo.conf:/etc/nginx/conf.d/default.conf:ro"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.geo_nginx.rule=Host(`geo-v2.myprm.local`)"
+      - "traefik.http.routers.geo_nginx.entryPoints=http"
+
+  geo_fpm:
+    container_name: geo_fpm
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - APP_ENV=dev
+        - GID=1000
+        - UID=1000
+        - INSTALL_DIR=app
+        - PHP_VERSION=8.0.10
+        - PROJECT_DIR=geozones
+        - ENTRYPOINT_FILE=docker-entrypoint-geo.sh
+    networks:
+      myprm_nw:
+    volumes:
+      - "./geozones:/srv/app:rw"
+      - "./geozones/log:/srv/app/var/log:rw"
+      - "./.state/master/share/uploads:/myprm/web/uploads:rw"
+      - "./.docker/php/conf.d/symfony.dev.ini:/usr/local/etc/php/conf.d/symfony.ini:ro"
+
+volumes:
+  master_api:
+  idp:
+
+networks:
+  myprm_nw:
+    external: true
