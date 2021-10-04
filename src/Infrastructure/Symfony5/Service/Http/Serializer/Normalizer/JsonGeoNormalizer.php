@@ -62,6 +62,6 @@ class JsonGeoNormalizer implements GeoNormalizerInterface, NormalizerInterface
 
     public function supportsNormalization($data, string $format = null)
     {
-        return $data instanceof AbstractZone;
+        return $data instanceof AbstractZone && $format === 'json';
     }
 }

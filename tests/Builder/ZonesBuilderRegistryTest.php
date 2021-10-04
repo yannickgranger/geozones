@@ -2,12 +2,12 @@
 
 namespace GeoZonesTests\Builder;
 
-use MyPrm\GeoZones\Domain\Builder\ZonesBuilder\RestCountriesEuBuilder;
-use MyPrm\GeoZones\Domain\Builder\ZonesBuilder\UnM49Builder;
-use MyPrm\GeoZones\Domain\Builder\ZonesBuilder\ZonesBuilderInterface;
-use MyPrm\GeoZones\Domain\Builder\ZonesBuilderRegistry;
-use MyPrm\GeoZones\Domain\Builder\ZonesBuilderRegistryInterface;
-use MyPrm\GeoZones\Domain\Exception\MissingBuilderException;
+use GeoZones\Domain\Builder\ZonesBuilder\RestCountriesEuBuilder;
+use GeoZones\Domain\Builder\ZonesBuilder\UnM49Builder;
+use GeoZones\Domain\Builder\ZonesBuilder\ZonesBuilderInterface;
+use GeoZones\Domain\Builder\ZonesBuilderRegistry;
+use GeoZones\Domain\Builder\ZonesBuilderRegistryInterface;
+use GeoZones\Domain\Exception\MissingBuilderException;
 use PHPUnit\Framework\TestCase;
 
 class ZonesBuilderRegistryTest extends TestCase

@@ -29,16 +29,18 @@ class GetZonesResponder implements GetZonesResponderInterface
             $statusCode = Response::HTTP_OK;
         }
 
+        $normalizedData = $this->serializer->normalize($data, 'json', $params);
+
         if ($contentType === '' || strtolower($contentType)  === 'application/json') {
             $response = new JsonResponse(
-                $this->serializer->normalize($data, 'json', $params),
+                $normalizedData,
                 $statusCode
             );
         }
 
         if (strtolower($contentType) === 'application/xml') {
             $xml = $this->serializer->serialize(
-                $data,
+                $normalizedData,
                 'xml'
             );
             $response = new Response($xml, $statusCode);
