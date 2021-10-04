@@ -1,6 +1,6 @@
 <?php
 
-namespace MyPrm\GeoZones\Tests\Infrastructure\Http\Controller;
+namespace GeoZonesTests\Infrastructure\Http\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpClient\HttpClient;

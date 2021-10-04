@@ -1,18 +1,18 @@
 regions:
     path: /api/geozones/{level}/{_locale}
-    controller: MyPrm\GeoZones\Infrastructure\Http\Controller\GeoZonesController
+    controller: Symfony5\Http\Controller\GeoZonesController
     methods: 'GET'
     defaults:
         _locale: en
 
 sub-regions:
     path: /api/geozones/{level}/{_locale}
-    controller: MyPrm\GeoZones\Infrastructure\Http\Controller\GeoZonesController
+    controller: Symfony5\Http\Controller\GeoZonesController
     methods: 'GET'
     defaults:
         _locale: en
 
 test:
     path: /api/test
-    controller: MyPrm\GeoZones\Infrastructure\Http\Controller\TestController
+    controller: Symfony5\Http\Controller\TestController
     methods: 'GET'

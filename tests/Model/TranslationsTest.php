@@ -1,6 +1,6 @@
 <?php
 
-namespace MyPrm\GeoZones\Tests\Model;
+namespace GeoZonesTests\Model;
 
 use Monolog\Test\TestCase;
 use MyPrm\GeoZones\Domain\Model\Translation;

@@ -83,7 +83,7 @@ services:
 
     app.fs.adapter:
       class: Symfony5\Service\Data\File\Cache\Adapter\FsAdapter
-      factory: ['Symfony5\Service\Data\File\Cache\Adapter\Factory\FsAdapterFactory', 'getAdapter']
+      factory: ['@Symfony5\Service\Data\File\Cache\Adapter\Factory\FsAdapterFactory', 'getAdapter']
 
     Symfony5\Service\Data\File\Cache\Adapter\FsAdapter:
       arguments:

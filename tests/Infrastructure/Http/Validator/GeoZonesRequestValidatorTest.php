@@ -1,6 +1,6 @@
 <?php
 
-namespace MyPrm\GeoZones\Tests\Infrastructure\Http\Validator;
+namespace GeoZonesTests\Infrastructure\Http\Validator;
 
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\HttpClient\HttpClient;
