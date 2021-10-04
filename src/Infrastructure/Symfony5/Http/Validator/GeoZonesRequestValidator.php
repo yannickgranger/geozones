@@ -66,7 +66,7 @@ class GeoZonesRequestValidator implements GeoZonesRequestValidatorInterface
     {
         $headers = $request->headers->getIterator()->getArrayCopy();
         $headers = array_change_key_case($headers, CASE_LOWER);
-        $contentType = !empty($headers['content-type'][0]) ? $headers['content-type'][0] : "no content-type";
+        $contentType = !empty($headers['content-type'][0]) ? $headers['content-type'][0] : "application/json";
         $locale = $request->getLocale();
         $uri = $request->getRequestUri();
         preg_match('/^\/api\/geozones\/\K\S+/', $uri, $matches);
@@ -76,13 +76,13 @@ class GeoZonesRequestValidator implements GeoZonesRequestValidatorInterface
         }, $matches);
 
         $level = $elements[0] ?? null;
-        $format = explode('/', $contentType);
+        $format = explode("/", $contentType);
 
         return [
             'locale' => $locale,
             'content-type' => $contentType,
             'level' => $level,
-            'cacheKey' => $level.'-'.$locale.'-'.$format[1]
+            'cacheKey' => $level.'-'.$locale.'-'.($format[1] ?? 'json')
         ];
     }
 }

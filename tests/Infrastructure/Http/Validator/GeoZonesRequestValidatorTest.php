@@ -34,14 +34,6 @@ class GeoZonesRequestValidatorTest extends KernelTestCase
         $client = HttpClient::createForBaseUri($this->baseUrl);
         $response = $client->request('GET', '/api/geozones/regions/en', [
             'headers' => [
-                'Content-type' => 'application/xml'
-            ]
-        ]);
-        $this->assertEquals(200, $response->getStatusCode());
-
-        $client = HttpClient::createForBaseUri($this->baseUrl);
-        $response = $client->request('GET', '/api/geozones/regions/en', [
-            'headers' => [
                 'Content-type' => 'application/json'
             ]
         ]);
@@ -56,6 +48,22 @@ class GeoZonesRequestValidatorTest extends KernelTestCase
         ]);
 
         $this->assertEquals(400, $response->getStatusCode());
+
+//        $client = HttpClient::createForBaseUri($this->baseUrl);
+//        $response = $client->request('GET', '/api/geozones/regions/en', [
+//            'headers' => [
+//                'Content-type' => 'application/xml'
+//            ]
+//        ]);
+//        $this->assertEquals(200, $response->getStatusCode());
+    }
+
+    public function testItGetsJsonFromMissingHeader()
+    {
+        $client = HttpClient::createForBaseUri($this->baseUrl);
+        $response = $client->request('GET', '/api/geozones/regions/en');
+
+        $this->assertEquals(200, $response->getStatusCode());
     }
 
     public function testLocale()

@@ -4,7 +4,7 @@ namespace GeoZones\Domain\Builder\CountryBuilder;
 
 interface CountryDataBuilderInterface
 {
-    public function build(): void;
+    public function build(): string;
     public function getData();
-    public function cacheData(?string $data, string $fileName): void;
+    public function cacheData(?string $data): void;
 }

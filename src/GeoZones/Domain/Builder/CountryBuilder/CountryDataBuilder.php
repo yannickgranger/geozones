@@ -28,7 +28,7 @@ class CountryDataBuilder implements CountryDataBuilderInterface
         $this->cacheTtl = $cacheTtl;
     }
 
-    public function build(): void
+    public function build(): string
     {
         $data = $this->getData();
         $iterator = $data[0];
@@ -57,8 +57,7 @@ class CountryDataBuilder implements CountryDataBuilderInterface
             $countryData[self::LANGUAGES] = $countryLanguages;
             $countries[] = $countryData;
         }
-        $data =json_encode($countries);
-        $this->cacheData($data, "CountryWithData.json");
+        return json_encode($countries);
     }
 
     public function findLanguage(\ArrayIterator $iterator, string $code): \Traversable
@@ -82,7 +81,7 @@ class CountryDataBuilder implements CountryDataBuilderInterface
         return [$countryLanguages, $languages];
     }
 
-    public function cacheData(?string $data, string $fileName): void
+    public function cacheData(?string $data): void
     {
         $this->cacheAdapter->save($this->cacheKey, $data, $this->cacheTtl);
     }
