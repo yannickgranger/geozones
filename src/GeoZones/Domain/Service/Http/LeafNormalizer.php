@@ -28,7 +28,7 @@ class LeafNormalizer implements GeoNormalizerInterface
 
         return [
             'parent' => $object->getParent() ? $object->getParent()->getName() : 'world',
-            'name' => $object->getName(),
+            'name' => $object->getName() ?? 'missing_name',
             'countries' => $normalizedCountries
         ];
     }
