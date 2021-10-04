@@ -8,8 +8,8 @@ parameters:
     app_valid_locales: ['de', 'en', 'es', 'fr', 'it', 'nl', 'pl', 'pt']
     app_classif_levels: ['world', 'regions', 'sub-regions']
     cache_ttl: 2592000
-    storage_dir: '%kernel.project_dir%/src/Infrastructure/Storage/Files'
-    storage_cache_dir: '%kernel.project_dir%/src/Infrastructure/Storage/Cache'
+    storage_dir: '%kernel.project_dir%/src/Infrastructure/Symfony5/Storage/Files'
+    storage_cache_dir: '%kernel.project_dir%/src/Infrastructure/Symfony5/Storage/Cache'
     country_languages_url: '%env(COUNTRY_LANGUAGES_CODES_URL)%'
     language_codes_url: '%env(string:LANGUAGES_CODES_URL)%'
     rest_eu_url: '%env(string:REST_COUNTRIES_URL)%'

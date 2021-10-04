@@ -21,7 +21,7 @@ class ZoneNormalizer
             ? ['parent' => $object->getParent()->getName()]
             : [];
 
-        $data['name'] = $object->getName();
+        $data['name'] = $object->getName() ?? "missing_name";
         return $data;
     }
 }

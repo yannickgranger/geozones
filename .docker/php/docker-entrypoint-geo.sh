@@ -6,13 +6,13 @@ if [ "${1#-}" != "$1" ]; then
 	set -- php-fpm "$@"
 fi
 
-mkdir -p /srv/app/var/cache /srv/app/var/log /srv/app/src/Infrastructure/Storage/Cache /srv/app/src/Infrastructure/Storage/Files
+mkdir -p /srv/app/var/cache /srv/app/var/log /srv/app/src/Infrastructure/Symfony5/Storage/Cache /srv/app/src/Infrastructure/Symfony5/Storage/Files
 setfacl -R -m u:www-data:rwX -m u:"$(whoami)":rwX /srv/app/var/cache
 setfacl -dR -m u:www-data:rwX -m u:"$(whoami)":rwX /srv/app/var/cache
 setfacl -R -m u:www-data:rwX -m u:"$(whoami)":rwX /srv/app/var/log
 setfacl -dR -m u:www-data:rwX -m u:"$(whoami)":rwX /srv/app/var/log
-setfacl -R -m u:www-data:rwX -m u:"$(whoami)":rwX /srv/app/src/Infrastructure/Storage
-setfacl -dR -m u:www-data:rwX -m u:"$(whoami)":rwX /srv/app/src/Infrastructure/Storage
+setfacl -R -m u:www-data:rwX -m u:"$(whoami)":rwX /srv/app/src/Infrastructure/Symfony5/Storage
+setfacl -dR -m u:www-data:rwX -m u:"$(whoami)":rwX /srv/app/src/Infrastructure/Symfony5/Storage
 
   if [ -d /srv/app/src/Infrastructure/Translation/ ]; then
       setfacl -R -m u:www-data:rwX -m u:"$(whoami)":rwX /srv/app/src/Infrastructure/Translation

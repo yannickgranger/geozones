@@ -11,6 +11,8 @@ class UnM49ZoneFactory extends AbstractZoneFactory implements UnM49ZoneFactoryIn
     public const PROVIDER = 'unM49';
     private CountryDataBuilderInterface $countryDataBuilder;
     private CacheAdapterInterface $cacheAdapter;
+    private string $cacheKey = 'countriesData.json';
+    private int $cacheTtl = 24*3600*366;
 
     public function __construct(
         CacheAdapterInterface $cacheAdapter,
@@ -24,11 +26,14 @@ class UnM49ZoneFactory extends AbstractZoneFactory implements UnM49ZoneFactoryIn
 
     public function getCountries(\ArrayIterator $iterator): array
     {
-        $cacheData = $this->cacheAdapter->get('countriesData.json');
-        if (!$cacheData) {
-            $this->countryDataBuilder->build();
-            $cacheData = $this->cacheAdapter->get('countriesData.json');
+        $cacheData = $this->cacheAdapter->get($this->cacheKey);
+        if ($cacheData === null) {
+            $this->cacheAdapter->delete($this->cacheKey);
+            $data = $this->countryDataBuilder->build();
+            $this->cacheAdapter->save($this->cacheKey, $data, $this->cacheTtl);
+            $cacheData = $this->cacheAdapter->get($this->cacheKey);
         }
+
         $this->countriesData = json_decode($cacheData, true);
 
         $countries = [];
