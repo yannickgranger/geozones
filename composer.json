@@ -36,12 +36,13 @@
     },
     "autoload": {
         "psr-4": {
-            "MyPrm\\GeoZones\\": "src/"
+            "GeoZones\\": "src/GeoZones/",
+            "Symfony5\\": "src/Infrastructure/Symfony5/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "MyPrm\\GeoZones\\Tests\\": "tests/"
+            "GeoZonesTests\\": "tests/"
         }
     },
     "replace": {

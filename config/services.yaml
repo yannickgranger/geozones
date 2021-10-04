@@ -47,59 +47,51 @@ services:
             $cacheTtl: '%cache_ttl%'
             $unM49acceptedLocales: '%unsd_accepted_locales%'
 
-    MyPrm\GeoZones\:
-        resource: '../src/'
+    GeoZones\:
+        resource: '../src/GeoZones/'
         exclude:
-            - '../src/DependencyInjection/'
-            - '../src/Domain/Entity'
-            - '../src/Infrastructure/Kernel.php'
-            - '../src/Tests/'
+            - '../src/GeoZones/Domain/Entity'
+    Symfony5\:
+        resource: '../src/Infrastructure/Symfony5/'
 
-    MyPrm\GeoZones\Infrastructure\Http\Controller\:
-        resource: '../src/Infrastructure/Http/Controller/'
+    Symfony5\Http\Controller\:
+        resource: '../src/Infrastructure/Symfony5/Http/Controller/'
         tags: ['controller.service_arguments']
 
-
-    MyPrm\GeoZones\Infrastructure\Http\Validator\GeoZonesRequestValidator:
+    Symfony5\Http\Validator\GeoZonesRequestValidator:
         arguments:
             - '%app_content_types%'
             - '%app_valid_locales%'
             - '%app_classif_levels%'
 
-
-    MyPrm\GeoZones\Domain\Builder\ZonesBuilder\:
-        resource: '../src/Domain/Builder/ZonesBuilder/'
+    GeoZones\Domain\Builder\ZonesBuilder\:
+        resource: '../src/GeoZones/Domain/Builder/ZonesBuilder/'
         tags:
             - { name: zone_builder }
 
-    MyPrm\GeoZones\Domain\Builder\ZonesBuilderRegistry:
-        class: MyPrm\GeoZones\Domain\Builder\ZonesBuilderRegistry
+    GeoZones\Domain\Builder\ZonesBuilderRegistry:
+        class: GeoZones\Domain\Builder\ZonesBuilderRegistry
         arguments:
           - !tagged_iterator zone_builder
           - '%zones_builders%'
 
-    MyPrm\GeoZones\Infrastructure\Service\Data\File\Cache\Adapter\Factory\FsAdapterFactory:
+    Symfony5\Service\Data\File\Cache\Adapter\Factory\FsAdapterFactory:
         arguments:
           - '%storage_cache_dir%'
           - '%cache_ttl%'
           - 'geozones'
 
     app.fs.adapter:
-      class: MyPrm\GeoZones\Infrastructure\Service\Data\File\Cache\Adapter\FsAdapter
-      factory: ['@MyPrm\GeoZones\Infrastructure\Service\Data\File\Cache\Adapter\Factory\FsAdapterFactory', 'getAdapter']
+      class: Symfony5\Service\Data\File\Cache\Adapter\FsAdapter
+      factory: ['@Symfony5\Service\Data\File\Cache\Adapter\Factory\FsAdapterFactory', 'getAdapter']
 
-    MyPrm\GeoZones\Infrastructure\Service\Data\File\Cache\Adapter\FsAdapter:
+    Symfony5\Service\Data\File\Cache\Adapter\FsAdapter:
       arguments:
         - '@app.fs.adapter'
 
-
-
-    MyPrm\GeoZones\Infrastructure\Exception\Listener\ExceptionListener:
+    Symfony5\Exception\Listener\ExceptionListener:
       tags:
         - { name: kernel.event_listener, event: kernel.exception }
-
-
-
 
 
 
