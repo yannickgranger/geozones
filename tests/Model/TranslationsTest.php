@@ -3,8 +3,8 @@
 namespace GeoZonesTests\Model;
 
 use Monolog\Test\TestCase;
-use MyPrm\GeoZones\Domain\Model\Translation;
-use MyPrm\GeoZones\Domain\Model\Translations;
+use GeoZones\Domain\Model\Translation;
+use GeoZones\Domain\Model\Translations;
 
 class TranslationsTest extends TestCase
 {
