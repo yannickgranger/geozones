@@ -45,13 +45,6 @@ if [ "$1" = 'php-fpm' ] || [ "$1" = 'php' ] || [ "$1" = 'bin/console' ]; then
     chown -R "${UID}":"${GID}" /srv/app /composer /home/"$USER"
     composer install --prefer-dist --no-progress --no-interaction
 	fi
-
-  if [ ! -d /root/.oh-my-zsh/ ]; then
-    sh -c "$(wget https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh -O -)"
-    git clone --depth=1 https://github.com/romkatv/powerlevel10k.git  /home/"$USER"/powerlevel10k
-    echo 'POWERLEVEL9K_DISABLE_CONFIGURATION_WIZARD=true' >> /home/"$USER"/.zshrc
-    ln -s /root/.oh-my-zsh /home/"$USER"
-  fi
 fi
 
 
