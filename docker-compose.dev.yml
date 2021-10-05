@@ -22,7 +22,7 @@ services:
           - "geo-v2.myprm.local"
     volumes:
       - "php_socket:/var/run/php"
-      - "./geozones/public:/srv/app/public:rw"
+      - "./public:/srv/app/public:rw"
       - "./.docker/nginx/conf.d/default-geo.conf:/etc/nginx/conf.d/default.conf:ro"
     labels:
       - "traefik.enable=true"
@@ -55,8 +55,8 @@ services:
       myprm_nw:
     volumes:
       - "php_socket:/var/run/php"
-      - "./geozones:/srv/app:rw"
-      - "./geozones/log:/srv/app/var/log:rw"
+      - ".:/srv/app:rw"
+      - "./log:/srv/app/var/log:rw"
       - "./.state/master/share/uploads:/myprm/web/uploads:rw"
       - "./.docker/php/conf.d/symfony.dev.ini:/usr/local/etc/php/conf.d/symfony.ini:ro"
 
