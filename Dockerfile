@@ -1,112 +1,119 @@
-ARG PHP_VERSION=7.4.8
+ARG PHP_VERSION=8.0.9
+ARG NGINX_VERSION=1.20
+ARG INSTALL_DIR=app
 
-FROM busybox as app-builder
+FROM alpine as app-builder
 ARG APP_ENV
-ARG INSTALL_DIR
-ARG PROJECT_DIR
-
-WORKDIR /srv/${INSTALL_DIR}
-
-COPY ${PROJECT_DIR}/composer.json ${PROJECT_DIR}/composer.lock ${PROJECT_DIR}/symfony.lock ${PROJECT_DIR}/.env ./
-COPY ${PROJECT_DIR}/bin ./bin
-COPY ${PROJECT_DIR}/config ./config
-COPY ${PROJECT_DIR}/public ./public
-COPY ${PROJECT_DIR}/src ./src
-
-
-FROM php:${PHP_VERSION}-fpm-alpine as php-stage
+ARG APP_DIR
 ARG INSTALL_DIR
 
 WORKDIR /srv/${INSTALL_DIR}
 
-RUN set -eux \
-    && apk add --no-cache --virtual .build-deps $PHPIZE_DEPS \
-    && apk add --no-cache \
-    icu-dev \
-    libpq \
-    libzip \
-    libzip-dev \
-    postgresql-dev
-
-RUN pecl install xdebug \
-    && docker-php-ext-install bcmath intl opcache pdo pdo_pgsql zip \
-#    && docker-php-ext-enable bcmath intl opcache pdo pdo_pgsql zip \
-    && apk del .build-deps
+COPY ${APP_DIR}/composer.json ${APP_DIR}/composer.lock ${APP_DIR}/symfony.lock ${APP_DIR}/.env ./
+COPY ${APP_DIR}/bin ./bin
+COPY ${APP_DIR}/config ./config
+COPY ${APP_DIR}/public ./public
+COPY ${APP_DIR}/src ./src
 
 
-FROM php:${PHP_VERSION}-fpm-alpine as composer-stage
-
+FROM php:${PHP_VERSION}-fpm-alpine AS symfony_php
+ARG APP_ENV
+ARG PHP_CONF_DIR
 ARG INSTALL_DIR
-ENV COMPOSER_ALLOW_SUPERUSER=1
-ENV COMPOSER_HOME=/composer
-ENV COMPOSER_HOME=/composer
 ARG ENTRYPOINT_FILE
+ARG TZ
+ENV TZ=${TZ}
 
-WORKDIR /srv/${INSTALL_DIR}
+# persistent / runtime deps
+RUN apk add --no-cache \
+		acl \
+		fcgi \
+		file \
+		gettext \
+		git \
+		gnu-libiconv \
+        tzdata \
+	;
 
+ENV LD_PRELOAD /usr/lib/preloadable_libiconv.so
+
+ARG APCU_VERSION=5.1.20
 RUN set -eux; \
-    apk add --no-cache \
-    acl \
-    fcgi
+	apk add --no-cache --virtual .build-deps \
+		$PHPIZE_DEPS \
+		icu-dev \
+		libzip-dev \
+        postgresql-dev \
+		zlib-dev \
+	; \
+	\
+	docker-php-ext-configure zip; \
+    docker-php-ext-configure pgsql -with-pgsql=/usr/local/pgsql; \
+	docker-php-ext-install -j$(nproc) \
+		intl \
+		zip \
+        pdo \
+        pdo_pgsql \
+	; \
+	pecl install \
+		apcu-${APCU_VERSION} \
+	; \
+	pecl clear-cache; \
+	docker-php-ext-enable \
+		apcu \
+		opcache \
+        pdo \
+        pdo_pgsql \
+	; \
+	\
+	runDeps="$( \
+		scanelf --needed --nobanner --format '%n#p' --recursive /usr/local/lib/php/extensions \
+			| tr ',' '\n' \
+			| sort -u \
+			| awk 'system("[ -e /usr/local/lib/" $1 " ]") == 0 { next } { print "so:" $1 }' \
+	)"; \
+	apk add --no-cache --virtual .phpexts-rundeps $runDeps; \
+	\
+	apk del .build-deps
 
-COPY .docker/php/${ENTRYPOINT_FILE} /usr/local/bin/docker-entrypoint.sh
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
-COPY --from=php-stage /usr /usr
+HEALTHCHECK --interval=10s --timeout=3s --retries=3 CMD ["docker-healthcheck"]
+COPY ${PHP_CONF_DIR}/php-fpm.d/zz-docker.conf /usr/local/etc/php-fpm.d/zz-docker.conf
 COPY --from=app-builder /srv /srv
-COPY ./.docker/php/conf.d/symfony.prod.ini $PHP_INI_DIR/conf.d/symfony.ini
-\
-RUN ln -s $PHP_INI_DIR/php.ini-production $PHP_INI_DIR/php.ini \
-    && mkdir /composer \
-    && set -eux \
-    && composer install --classmap-authoritative --prefer-dist --no-dev --no-scripts --no-progress \
-    && composer dump-autoload --classmap-authoritative --no-dev \
-    && chmod +x bin/console \
-    && sync \
-    && chmod +x /usr/local/bin/docker-entrypoint.sh
-
-FROM php:${PHP_VERSION}-fpm-alpine as dev-stage
-ARG INSTALL_DIR
-ARG APP_ENV
-ARG GID
-ARG UID
-
-ENV COMPOSER_ALLOW_SUPERUSER=1
-ENV COMPOSER_HOME=/composer
-ENV APP_ENV=${APP_ENV}
-ENV GID="${GID}"
-ENV UID="${UID}"
-ENV ZSH_THEME powerlevel10k
-ENV USER dockeruser
-ENV TZ=Europe/Paris
 
 WORKDIR /srv/${INSTALL_DIR}
 
-RUN set -eux; \
-    apk add --no-cache \
-    acl \
-    zsh \
-    git \
-    gettext \
-    tzdata
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+COPY ${PHP_CONF_DIR}/docker-healthcheck.sh /usr/local/bin/docker-healthcheck
+COPY ${PHP_CONF_DIR}/${ENTRYPOINT_FILE} /usr/local/bin/docker-entrypoint.sh
+COPY ${PHP_CONF_DIR}/conf.d/symfony.prod.ini $PHP_INI_DIR/conf.d/symfony.ini
 
-COPY --from=composer-stage /usr /usr
-COPY --from=composer-stage /srv /srv
+# https://getcomposer.org/doc/03-cli.md#composer-allow-superuser
+ENV COMPOSER_ALLOW_SUPERUSER=1
 
-RUN addgroup -S dockeruser -g "${GID}" \
-    && adduser \
-    --disabled-password \
-    --gecos "" \
-    --shell "/bin/zsh" \
-    --home "/home/$USER" \
-    --ingroup "dockeruser" \
-    --uid "${UID}" \
-    "dockeruser"
+RUN ln -s $PHP_INI_DIR/php.ini-production $PHP_INI_DIR/php.ini ; \
+    set -eux; \
+	mkdir -p var/cache var/log; \
+	composer install --prefer-dist --no-dev --no-progress --no-scripts --no-interaction; \
+	composer dump-autoload --classmap-authoritative --no-dev; \
+	composer symfony:dump-env prod; \
+	composer run-script --no-dev post-install-cmd; \
+	chmod +x bin/console /usr/local/bin/docker-entrypoint.sh /usr/local/bin/docker-healthcheck; \
+    cp /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone \
+    && apk del tzdata; \
+    sync
 
-RUN cp /usr/share/zoneinfo/$TZ /etc/localtime  \
-    && echo $TZ > /etc/timezone \
-    && apk del tzdata
-
-COPY .zshrc /home/"$USER"/.zshrc
+VOLUME /srv/app/var
+VOLUME /var/run/php
 
 ENTRYPOINT ["docker-entrypoint.sh"]
 CMD ["php-fpm"]
+
+
+FROM nginx:${NGINX_VERSION}-alpine AS symfony_nginx
+
+ARG INSTALL_DIR
+ARG NGINX_CONF_DIR
+WORKDIR /srv/${INSTALL_DIR}
+
+COPY --from=app-builder /srv/${INSTALL_DIR}/public /srv/${INSTALL_DIR}/public
+COPY ${NGINX_CONF_DIR}/conf.d/default.conf /etc/nginx/conf.d/default.conf
